@@ -18,7 +18,7 @@ default = ["sentry"]
 [dependencies]
 structopt = "0.3.16"
 anyhow = "1.0"
-indicatif = "0.15.0"
+indicatif = "0.16.1"
 env_logger = "0.8.1"
 log = "0.4.0"
 lazy_static = "1.4.0"
