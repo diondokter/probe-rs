@@ -1074,9 +1074,9 @@ dependencies = [
 
 [[package]]
 name = "gdbstub"
-version = "0.6.3"
+version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "32c95766e0414f8bfc1d07055574c621b67739466d6ba516c4fef8e99d30d2e6"
+checksum = "1ec68d54b28ba0a89b2d8c62ca1aacebda9e200c5da536b417c40040f2b32299"
 dependencies = [
  "bitflags",
  "cfg-if",
