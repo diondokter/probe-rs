@@ -316,3 +316,37 @@ impl<'probe> ExceptionInterface for crate::architecture::arm::core::armv7m::Armv
         exception_details(self, stackframe_registers)
     }
 }
+
+impl<'probe> ExceptionInterface for crate::architecture::arm::core::armv8m::Armv8m<'probe> {
+    fn calling_frame_registers(
+        &mut self,
+        stackframe_registers: &crate::debug::DebugRegisters,
+    ) -> Result<crate::debug::DebugRegisters, crate::Error> {
+        calling_frame_registers(self, stackframe_registers)
+    }
+
+    fn exception_description(
+        &mut self,
+        stackframe_registers: &crate::debug::DebugRegisters,
+    ) -> Result<String, crate::Error> {
+        // Load the provided xPSR register as a bitfield.
+        let exception_number = Xpsr(
+            stackframe_registers
+                .get_register_value_by_role(&crate::core::RegisterRole::ProcessorStatus)?
+                as u32,
+        )
+        .exception_number();
+
+        Ok(format!(
+            "{:?}",
+            ExceptionReason::from(exception_number).expanded_description(self)?
+        ))
+    }
+
+    fn exception_details(
+        &mut self,
+        stackframe_registers: &DebugRegisters,
+    ) -> Result<Option<ExceptionInfo>, Error> {
+        exception_details(self, stackframe_registers)
+    }
+}
