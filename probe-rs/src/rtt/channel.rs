@@ -82,10 +82,18 @@ impl RttChannelBuffer {
         }
     }
 
-    pub fn standard_name_pointer(&self) -> u64 {
-        match self {
+    /// Get the pointer to the standard name.
+    ///
+    /// If the channel has no name (and thus the pointer is null), `None` is returned instead
+    pub fn standard_name_pointer(&self) -> Option<u64> {
+        let ptr = match self {
             RttChannelBuffer::Buffer32(x) => u64::from(x.standard_name_pointer),
             RttChannelBuffer::Buffer64(x) => x.standard_name_pointer,
+        };
+
+        match ptr {
+            0 => None,
+            1.. => Some(ptr),
         }
     }
 
@@ -226,7 +234,12 @@ impl Channel {
         // This should at least catch most cases where the control block is partially initialized.
         this.read_pointers(core, "")?;
         // Read channel name just after the pointer was validated to be within an expected range.
-        this.name = read_c_string(core, this.info.standard_name_pointer())?;
+        this.name = this
+            .info
+            .standard_name_pointer()
+            .map(|ptr| read_c_string(core, ptr))
+            .transpose()?
+            .flatten();
         this.mode(core)?;
 
         Ok(Some(this))
